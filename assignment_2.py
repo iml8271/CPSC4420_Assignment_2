@@ -59,3 +59,40 @@ class QLearningAgent:
         env.close()
         return agent, np.array(episode_rewards)
 
+    def test_agent(agent, n_episodes=30):
+        env = gym.make(ENV, max_episode_steps=STEP_LIMIT)
+        test_rewards, steps, wins = [], [], 0
+
+        for episode in range(n_episodes):
+            state, _ = env.reset()
+            total_reward, count, done = 0, 0, False
+            while not done:
+                action = agent.get_action(state, training=False)
+                state, reward, terminated, truncated, _ = env.step(action)
+                total_reward += reward
+                count += 1
+                done = terminated or truncated
+            wins += terminated
+            test_rewards.append(total_reward)
+            steps.append(count)
+
+        env.close()
+        return np.mean(test_rewards), wins / n_episodes, np.mean(steps)
+
+    def moving_avg(x, window=20):
+        return np.convolve(x, np.ones(window) / window, mode="valid")
+
+    def plot_results(episode_rewards, title, filename, window=20):
+        plt.figure(figsize=(10, 5))
+        plt.plot(episode_rewards, alpha=0.3, label="Episode Reward")
+        plt.plot(range(window - 1, len(episode_rewards)), moving_avg(episode_rewards, window),
+                 label=f"{window}-Episode Moving Average")
+        plt.ylim(-400, 0)
+        plt.xlabel("Episode")
+        plt.ylabel("Total Reward")
+        plt.title(title)
+        plt.legend()
+        plt.grid(True, alpha=0.3)
+        plt.savefig(filename)
+        plt.close()
+

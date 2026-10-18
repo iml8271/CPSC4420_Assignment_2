@@ -33,8 +33,8 @@ class QLearningAgent:
             target_q = reward + self.gamma * np.max(self.q_table[next_state])
         self.q_table[state, action] += self.lr * (target_q - current_q)
 
-        def decay_epsilon(self):
-            self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
+    def decay_epsilon(self):
+        self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
 
 
 def train_agent(n_episodes=EPISODE_COUNT, seed=0, **settings):

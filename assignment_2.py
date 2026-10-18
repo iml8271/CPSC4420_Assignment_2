@@ -135,3 +135,25 @@ def run_experiment(name, values, label, filename):
     plt.savefig(filename)
     plt.close()
     return best_v
+
+
+if __name__ == "__main__":
+    print("Baseline:", BASELINE)
+    base_agent, base_rewards = train_agent()
+    plot_results(base_rewards, "Q-Learning on Cliff Walking", "plot_C_baseline.png")
+    base_test = test_agent(base_agent)
+
+    best_lr = run_experiment("learning_rate", [0.1, 0.5, 0.9], "alpha", "plot_D_alpha.png")
+    best_gamma = run_experiment("discount_factor", [0.5, 0.9, 0.99], "gamma", "plot_E_gamma.png")
+    best_decay = run_experiment("epsilon_decay", [0.9, 0.95, 0.99], "eps_decay", "plot_F_epsilon_decay.png")
+
+    best_cfg = dict(BASELINE, learning_rate=best_lr, discount_factor=best_gamma,
+                    epsilon_decay=best_decay)
+    print("\nbest cfg:", best_cfg)
+    best_agent, best_rewards = train_agent(**best_cfg)
+    plot_results(best_rewards, "Best cfg Q-Learning on CliffWalking", "plot_G_best.png")
+    best_test = test_agent(best_agent)
+
+    print(f"\n{'':10}{'avg reward':>12}{'success':>10}{'avg steps':>11}")
+    for name, (r, s, n) in [("Base line", base_test), ("Best", best_test)]:
+        print(f"{name:10}{r:12.1f}{s:10.0%}{n:11.1f}")

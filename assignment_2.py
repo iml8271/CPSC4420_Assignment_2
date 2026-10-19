@@ -1,6 +1,8 @@
 import gymnasium as gym
 import numpy as np
 import matplotlib.pyplot as plt
+from gymnasium.wrappers import RecordVideo
+
 
 ENV = 'CliffWalking-v1'
 STEP_LIMIT = 200
@@ -157,3 +159,14 @@ if __name__ == "__main__":
     print(f"\n{'':10}{'avg reward':>12}{'success':>10}{'avg steps':>11}")
     for name, (r, s, n) in [("Base line", base_test), ("Best", best_test)]:
         print(f"{name:10}{r:12.1f}{s:10.0%}{n:11.1f}")
+
+    #recording stuff, uncomment to record more videos
+    # env = gym.make(ENV, render_mode="rgb_array")
+    # env = RecordVideo(env, video_folder="videos", name_prefix="trained_agent")
+    # state, _ = env.reset()
+    # done = False
+    # while not done:
+    #     action = best_agent.get_action(state, training=False)
+    #     state, reward, terminated, truncated, _ = env.step(action)
+    #     done = terminated or truncated
+    # env.close()
